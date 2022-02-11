@@ -1,5 +1,6 @@
 package com.example.biblioteca.model;
 
+import com.example.biblioteca.repository.StudentRepo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.springframework.lang.Nullable;
@@ -16,6 +17,8 @@ import java.util.List;
 @Getter
 @Entity(name = "Student")
 @Table(name = "student")
+
+@ToString
 
 public class Student {
     @Id
@@ -54,30 +57,52 @@ public class Student {
     @Column(
             name = "email",
             nullable = false,
-            columnDefinition = "TEXT"
+            columnDefinition = "TEXT",
+            unique = true
     )
     @NotBlank(message = "Email can not be null")
-
     String email;
+
     @Column(
             name = "password",
             nullable = false,
             columnDefinition = "TEXT"
     )
-    @NotBlank(message = "Password can not be blank")
+    @NotBlank(message = "Password cat not be null")
     String password;
 
-    public Student(String name, String cnp, String address) {
+    public Student(String name, String cnp, String address,String email,String password) {
         this.name = name;
         this.cnp = cnp;
         this.address = address;
+        this.email=email;
+        this.password=password;
     }
 
-    @JsonManagedReference
     @OneToMany(
             mappedBy = "student",
-            orphanRemoval = true,
+            fetch = FetchType.EAGER,
             cascade = CascadeType.ALL
+
     )
+    @JsonManagedReference
     private List<Book> books = new ArrayList<>();
+
+
+
+
+    //add book
+    //remove book
+    public void addBook(Book newBook){
+        books.add(newBook);
+        newBook.setStudent(this);
+    }
+    public void removeBook(Book book){
+        books.remove(book);
+    }
+
+    public String toString(){
+        return "Numele este :"+this.name+", Email: "+this.getEmail();
+
+    }
 }

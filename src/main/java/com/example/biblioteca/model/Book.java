@@ -15,6 +15,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @Entity(name="Book")
 @Table(name="book")
+@ToString
 public class Book {
     @Id
     @SequenceGenerator(
@@ -65,17 +66,19 @@ public class Book {
         this.genre = genre;
         this.year = year;
     }
+
+
+
     @ManyToOne
-    @JsonBackReference
     @JoinColumn(
             name="student_id",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
-                    name="student_id_fk"
+                    name="student_book_fk"
             )
     )
+    @JsonBackReference
     private Student student;
-
     public void  addBook(Book newBook){
 
         this.addBook(newBook);
@@ -83,4 +86,5 @@ public class Book {
 
 
     }
+
 }
