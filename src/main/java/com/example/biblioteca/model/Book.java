@@ -87,4 +87,11 @@ public class Book {
 
     }
 
+    public boolean equals(Object b){
+        Book bk=(Book) b;
+        if(this.title.equals(bk.getTitle())&&this.author.equals(bk.getAuthor())&&this.year==bk.getYear()){
+            return true;
+        }
+        return false;
+    }
 }

@@ -3,6 +3,7 @@ package com.example.biblioteca.services;
 import com.example.biblioteca.exceptions.BadRequest;
 import com.example.biblioteca.model.Book;
 import com.example.biblioteca.model.Student;
+import com.example.biblioteca.repository.BookRepo;
 import com.example.biblioteca.repository.StudentRepo;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +14,11 @@ import java.util.stream.Collectors;
 public class StudentService {
 
     private final StudentRepo studentRepo;
+    private final BookRepo bookRepo;
 
-    public StudentService(StudentRepo studentRepo) {
+    public StudentService(StudentRepo studentRepo,BookRepo bookRepo) {
         this.studentRepo = studentRepo;
+        this.bookRepo=bookRepo;
     }
 
     public List<Student> getAllStudents(){
@@ -28,6 +31,14 @@ public class StudentService {
        }else{
            throw new BadRequest("Student id does not exists!");
        }
+    }
+
+    public Student getStudentByEmail(String email){
+        if(studentRepo.findStudentByEmail(email).isPresent()){
+            return studentRepo.findStudentByEmail(email).get();
+        }else{
+            throw new BadRequest("Student id does not exists!");
+        }
     }
 
     //addStudent
@@ -43,7 +54,6 @@ public class StudentService {
     public void deleteStudent(Long id){
         studentRepo.deleteById(id);
     }
-
 
     public void updateStudent(Student newStud){
         if(this.getStudentById(newStud.getId())!=null){
@@ -61,9 +71,35 @@ public class StudentService {
 
     }
 
-    public Book addBook(Long id,Book book){
-        Student student=this.studentRepo.findById().get();
-        student.getBooks().add(book);
-        studentRepo.save(student)
+//de test NU FUNCTIONEAZA
+//    public boolean isBook(Long id,Book book){
+//       return studentRepo.findStudentByIdAndBook(id,book).isPresent();
+//    }
+
+    public void addBook(Long id,Book book) {
+        Student student = studentRepo.findById(id).get();
+        if(bookRepo.findBookByTitleId(book.getTitle(),book.getAuthor(),id).isPresent()){
+            throw new BadRequest("Book exists in your biblio");
+        }else{
+            student.addBook(book);
+            studentRepo.save(student);
+
+        }
     }
+    public void updBook(Long id,Book updBook) {
+        Student student=studentRepo.findById(id).get();
+        if(!bookRepo.findById(id).isPresent()){
+            throw new BadRequest("Book exists in your biblio");
+        }else{
+            Book book = bookRepo.findById(id).get();
+            book.setAuthor(updBook.getAuthor());
+            book.setTitle(updBook.getTitle());
+            book.setGenre(updBook.getGenre());
+            book.setYear(updBook.getYear());
+            student.addBook(book);
+            studentRepo.save(student);
+        }
+    }
+
+
 }

@@ -18,7 +18,6 @@ public class StudentController {
 
     StudentService studentService;
 
-
     @Autowired
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
@@ -27,9 +26,16 @@ public class StudentController {
 
     @ResponseStatus
     @GetMapping("/{id}")
-    public Student getStud(@PathVariable Long id){
+    public Student getStudId(@PathVariable Long id){
           return this.studentService.getStudentById(id);
     }
+
+    @ResponseStatus
+    @GetMapping("/email/{email}")
+    public Student getStudEmail(@PathVariable String email) {
+        return this.studentService.getStudentByEmail(email);
+    }
+
 
     @ResponseStatus
     @GetMapping
@@ -37,6 +43,13 @@ public class StudentController {
         return this.studentService.getAllStudents();
     }
 
+////test
+//@ResponseStatus
+//@GetMapping("/bks")
+//public Student bookExists(@RequestBody Book book){
+//
+//    return this.studentRepo.findStudentByIdAndBook(book).get();
+//}
 
 
     @ResponseStatus(value = HttpStatus.CREATED)
@@ -45,6 +58,8 @@ public class StudentController {
         this.studentService.addStudent(student);
 
     }
+
+
     @ResponseStatus
     @PutMapping
     public void updateStudent(@RequestBody Student student){
@@ -52,11 +67,15 @@ public class StudentController {
     }
 
     @ResponseStatus
-    @PostMapping("/books/{id}")
-    public Book addBook(@RequestBody Book book,@PathVariable Long id){
-        return null;
+    @PostMapping("/books/add/{id}")
+    public void addBook(@RequestBody Book book,@PathVariable Long id){
+        this.studentService.addBook(id,book);
     }
 
-
+    @ResponseStatus
+    @PutMapping("/books/upd/{id}")
+    public void updBook(@RequestBody Book book,@PathVariable Long id){
+        this.studentService.updBook(id,book);
+    }
 
 }

@@ -90,13 +90,11 @@ public class Student {
 
 
 
-
-    //add book
-    //remove book
     public void addBook(Book newBook){
         books.add(newBook);
         newBook.setStudent(this);
     }
+
     public void removeBook(Book book){
         books.remove(book);
     }
