@@ -51,6 +51,13 @@ public class StudentController {
 //    return this.studentRepo.findStudentByIdAndBook(book).get();
 //}
 
+@ResponseStatus
+@GetMapping("/bks")
+public List<Student> bookExists(@RequestBody Book book){
+
+    return this.studentService.studentsWithBook(book);
+}
+
 
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/create")
@@ -73,9 +80,15 @@ public class StudentController {
     }
 
     @ResponseStatus
-    @PutMapping("/books/upd/{id}")
-    public void updBook(@RequestBody Book book,@PathVariable Long id){
-        this.studentService.updBook(id,book);
+    @PutMapping("/books/upd/{idS}/{idB}")
+    public void updBook(@RequestBody Book book,@PathVariable Long idS,@PathVariable Long idB){
+        this.studentService.updBook(idS,idB,book);
+    }
+
+    @ResponseStatus
+    @DeleteMapping("/books/del/{idS}/{idB}")
+    public void delBook(@PathVariable Long idS,@PathVariable Long idB){
+        this.studentService.delBook(idS,idB);
     }
 
 }

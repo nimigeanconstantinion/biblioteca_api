@@ -76,6 +76,11 @@ public class StudentService {
 //       return studentRepo.findStudentByIdAndBook(id,book).isPresent();
 //    }
 
+    public List<Student> studentsWithBook(Book book){
+       return studentRepo.findStudentByIdAndBook(book);
+    }
+
+
     public void addBook(Long id,Book book) {
         Student student = studentRepo.findById(id).get();
         if(bookRepo.findBookByTitleId(book.getTitle(),book.getAuthor(),id).isPresent()){
@@ -86,20 +91,34 @@ public class StudentService {
 
         }
     }
-    public void updBook(Long id,Book updBook) {
-        Student student=studentRepo.findById(id).get();
-        if(!bookRepo.findById(id).isPresent()){
-            throw new BadRequest("Book exists in your biblio");
-        }else{
-            Book book = bookRepo.findById(id).get();
+    public void updBook(Long idS,Long idB,Book updBook) {
+        Student student=studentRepo.findById(idS).get();
+        if(bookRepo.findById(idB).isPresent()){
+            Book book = bookRepo.findById(idB).get();
             book.setAuthor(updBook.getAuthor());
             book.setTitle(updBook.getTitle());
             book.setGenre(updBook.getGenre());
             book.setYear(updBook.getYear());
-            student.addBook(book);
+            book.setStudent(student);
+
+            bookRepo.save(book);
             studentRepo.save(student);
+        }else{
+            throw new BadRequest("Book not exists in your biblio");
+
         }
     }
 
+    public void delBook(Long idStudent,Long idBook){
+        Student st=this.studentRepo.findById(idStudent).get();
+        Book bk=this.bookRepo.findById(idBook).get();
+        System.out.println(st);
+        System.out.println(bk);
+        st.removeBook(bk);
+        System.out.println(st.getBooks().size());
+        studentRepo.save(st);
+        bookRepo.deleteById(idBook);
+        System.out.println(bookRepo.findAll().size());
+    }
 
 }
